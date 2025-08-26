@@ -1,0 +1,26 @@
+{
+  "name": "binary-search-trees",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChivuAndrei2003/Binary-Search-Trees.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ChivuAndrei2003/Binary-Search-Trees/issues"
+  },
+  "homepage": "https://github.com/ChivuAndrei2003/Binary-Search-Trees#readme",
+  "devDependencies": {
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1"
+  }
+}
