@@ -1,5 +1,5 @@
 class Node {
-  constructor(data, leftChild, rightChild) {
+  constructor(data, left, right) {
     this.data = data;
     this.left = null;
     this.right = null;
@@ -8,11 +8,12 @@ class Node {
 
 class Tree {
   constructor(arr) {
+    const sortedArr = [...new Set(arr)].sort((a, b) => a - b);
     this.root = this.buildTree(arr);
   }
 
-    buildTree(arr) {
-      
-    return;
-  }
+  buildTree(arr) {}
 }
+
+const test = new Tree();
+console.log(test.buildTree());
