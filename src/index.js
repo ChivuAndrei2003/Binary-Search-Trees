@@ -7,13 +7,21 @@ class Node {
 }
 
 class Tree {
-  constructor(arr) {
+  constructor(arr = []) {
     const sortedArr = [...new Set(arr)].sort((a, b) => a - b);
-    this.root = this.buildTree(arr);
+    this.root = this.buildTree(sortedArr);
   }
 
-  buildTree(arr) {}
+  buildTree(sortedArr) {
+    if (sortedArr.length === 0) return null;
+    const mid = Math.floor(sortedArr.length / 2);
+    const newNode = new Node(sortedArr[mid]);
+    newNode.left = this.buildTree(sortedArr.slice(0, mid));
+    newNode.right = this.buildTree(sortedArr.slice(mid + 1));
+    return newNode;
+  }
 }
 
-const test = new Tree();
-console.log(test.buildTree());
+const arr = [2, 4, 3, 1, 2, 5];
+const test = new Tree(arr);
+console.log(test.root);
