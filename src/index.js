@@ -20,6 +20,23 @@ class Tree {
     newNode.right = this.buildTree(sortedArr.slice(mid + 1));
     return newNode;
   }
+  
+  insert(value, currNode =this.root) {
+    if (currNode === null) return new Node(value);
+    if (currNode.value === value) return;
+
+    if (currNode.value < value) {
+      currNode.right = this.insert(value, currNode.right);
+    } else {
+      currNode.left = this.insert(value, currNode.left);
+    }
+    return currNode;
+    
+  }
+  delete(value, currNode = this.root) {
+    
+  }
+
 }
 
 const arr = [2, 4, 3, 1, 2, 5];
