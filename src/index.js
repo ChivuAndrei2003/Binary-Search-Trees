@@ -23,9 +23,9 @@ class Tree {
   
   insert(value, currNode =this.root) {
     if (currNode === null) return new Node(value);
-    if (currNode.value === value) return;
+    if (currNode.data === value) return;
 
-    if (currNode.value < value) {
+    if (currNode.data < value) {
       currNode.right = this.insert(value, currNode.right);
     } else {
       currNode.left = this.insert(value, currNode.left);
