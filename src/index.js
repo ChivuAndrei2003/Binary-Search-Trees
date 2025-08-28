@@ -36,9 +36,9 @@ class Tree {
   remove(value, currNode = this.root) {
     if (currNode === null) return currNode;
 
-    if (currNode.value === value) {
+    if (currNode.data === value) {
       currNode = this.#removeNodeHelper(currNode);
-    } else if (currNode.value > value) {
+    } else if (currNode.data > value) {
       currNode.left = this.remove(value, currNode.left);
     } else {
       currNode.right = this.remove(value, currNode.right);
@@ -47,9 +47,9 @@ class Tree {
   }
 
   find(value, node = this.root) {
-    if (node === null || node.value === value) return node;
+    if (node === null || node.data === value) return node;
 
-    if (node.value < value) {
+    if (node.data < value) {
       return this.find(value, node.right);
     } else {
       return this.find(value, node.left);
@@ -63,7 +63,7 @@ class Tree {
       const curentNode = que.shift();
       callbackFn
         ? callbackFn(curentNode)
-        : levelOrderList.push(curentNode.value);
+        : levelOrderList.push(curentNode.data);
 
       const enqueList = [curentNode?.left, curentNode?.right].filter(
         (value) => value
@@ -74,10 +74,10 @@ class Tree {
   }
 
   inorder(callbackFn, node = this.root, inorderList = []) {
-    if (node = null) return;
+    if (node === null) return;
 
     this.inorder(callbackFn, node.left, inorderList);
-    callbackFn ? callbackFn(node) : inorderList.push(node.value);
+    callbackFn ? callbackFn(node) : inorderList.push(node.data);
     this.inorder(callbackFn, node.right, inorderList);
 
     if (inorderList.length > 0) return inorderList;
@@ -86,7 +86,7 @@ class Tree {
   preorder(callbackFn, node = this.root, preorderList = []) {
     if (node === null) return;
 
-    callbackFn ? callbackFn(node) : preorderList.push(node.value);
+    callbackFn ? callbackFn(node) : preorderList.push(node.data);
     this.preorder(callbackFn, node.left, preorderList);
     this.preorder(callbackFn, node.right, preorderList);
 
@@ -98,7 +98,7 @@ class Tree {
 
     this.postorder(callbackFn, node.left, postorderList);
     this.postorder(callbackFn, node.right, postorderList);
-    callbackFn ? callbackFn(node) : postorderList.push(node.value);
+    callbackFn ? callbackFn(node) : postorderList.push(node.data);
 
     if (postorderList.length > 0) return postorderList;
   }
@@ -114,9 +114,9 @@ class Tree {
 
   depth(nodeVal, node = this.root, edgeCount = 0) {
     if (node === null) return;
-    if (node.value === nodeVal) return edgeCount;
+    if (node.data === nodeVal) return edgeCount;
 
-    if (node.value < nodeVal) {
+    if (node.data < nodeVal) {
       return this.depth(nodeVal, node.right, edgeCount + 1);
     } else {
       return this.depth(nodeVal, node.left, edgeCount + 1);
@@ -133,17 +133,18 @@ class Tree {
   }
 
   prettyPrint(node = this.root, prefix = "", isLeft = true) {
-    if (node.rightChild) {
+    if (node === null) return;
+    if (node.right) {
       this.prettyPrint(
-        node.rightChild,
+        node.right,
         `${prefix}${isLeft ? "|   " : "    "}`,
         false
       );
     }
-    console.log(`${prefix}${isLeft ? "└── " : "┌── "}${node.value}`);
-    if (node.leftChild) {
+    console.log(`${prefix}${isLeft ? "└── " : "┌── "}${node.data}`);
+    if (node.left) {
       this.prettyPrint(
-        node.leftChild,
+        node.left,
         `${prefix}${isLeft ? "    " : "|   "}`,
         true
       );
@@ -175,8 +176,8 @@ class Tree {
   #removeNodeHelper(node) {
     if (node.left && node.right) {
       const successorNode = this.#inorderSuccesorFor(node.right);
-      node.value = successorNode.value;
-      node.right = this.remove(successorNode.value, node.right);
+      node.data = successorNode.data;
+      node.right = this.remove(successorNode.data, node.right);
       return node;
     } else {
       const replacementNode = node.right || node.left;
@@ -186,6 +187,28 @@ class Tree {
   }
 }
 
+// TODO(human)
+
 const arr = [2, 4, 3, 1, 2, 5];
 const test = new Tree(arr);
-console.log(test.root);
+console.log("=== BST Testing ===");
+console.log("Tree structure:");
+test.prettyPrint();
+
+console.log("\nTraversal tests:");
+console.log("Inorder:", test.inorder());
+console.log("Preorder:", test.preorder());
+console.log("Postorder:", test.postorder());
+console.log("Level order:", test.levelOrder());
+
+console.log("\nSearch and insert tests:");
+console.log("Find 4:", test.find(4) ? "Found" : "Not found");
+console.log("Find 10:", test.find(10) ? "Found" : "Not found");
+test.insert(6);
+console.log("After inserting 6:");
+test.prettyPrint();
+
+console.log("\nTree properties:");
+console.log("Height:", test.height());
+console.log("Depth of node 4:", test.depth(4));
+console.log("Is balanced:", test.isBalanced());
