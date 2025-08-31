@@ -1,6 +1,6 @@
 
 class Node {
-  constructor(data, left, right) {
+  constructor(data) {
     this.data = data;
     this.left = null;
     this.right = null;
@@ -22,28 +22,28 @@ class Tree {
     return newNode;
   }
 
-  insert(value, currNode = this.root) {
-    if (currNode === null) return new Node(value);
-    if (currNode.data === value) return;
+  insert(value, currentNode = this.root) {
+    if (currentNode === null) return new Node(value);
+    if (currentNode.data === value) return currentNode;
 
-    if (currNode.data < value) {
-      currNode.right = this.insert(value, currNode.right);
+    if (currentNode.data < value) {
+      currentNode.right = this.insert(value, currentNode.right);
     } else {
-      currNode.left = this.insert(value, currNode.left);
+      currentNode.left = this.insert(value, currentNode.left);
     }
-    return currNode;
+    return currentNode;
   }
-  remove(value, currNode = this.root) {
-    if (currNode === null) return currNode;
+  remove(value, currentNode = this.root) {
+    if (currentNode === null) return currentNode;
 
-    if (currNode.data === value) {
-      currNode = this.#removeNodeHelper(currNode);
-    } else if (currNode.data > value) {
-      currNode.left = this.remove(value, currNode.left);
+    if (currentNode.data === value) {
+      currentNode = this.#removeNodeHelper(currentNode);
+    } else if (currentNode.data > value) {
+      currentNode.left = this.remove(value, currentNode.left);
     } else {
-      currNode.right = this.remove(value, currNode.right);
+      currentNode.right = this.remove(value, currentNode.right);
     }
-    return currNode;
+    return currentNode;
   }
 
   find(value, node = this.root) {
@@ -57,54 +57,75 @@ class Tree {
   }
 
   levelOrder(callbackFn) {
-    const que = [this.root];
+    if (this.root === null) return [];
+    
+    const queue = [this.root];
     const levelOrderList = [];
-    while (que.length > 0) {
-      const curentNode = que.shift();
-      callbackFn
-        ? callbackFn(curentNode)
-        : levelOrderList.push(curentNode.data);
+    
+    while (queue.length > 0) {
+      const currentNode = queue.shift();
+      
+      if (callbackFn) {
+        callbackFn(currentNode);
+      } else {
+        levelOrderList.push(currentNode.data);
+      }
 
-      const enqueList = [curentNode?.left, curentNode?.right].filter(
-        (value) => value
-      );
-      que.push(...enqueList);
+      if (currentNode.left) queue.push(currentNode.left);
+      if (currentNode.right) queue.push(currentNode.right);
     }
-    if (levelOrderList.length > 0) return levelOrderList;
+    
+    return callbackFn ? undefined : levelOrderList;
   }
 
   inorder(callbackFn, node = this.root, inorderList = []) {
-    if (node === null) return;
+    if (node === null) return callbackFn ? undefined : [];
 
     this.inorder(callbackFn, node.left, inorderList);
-    callbackFn ? callbackFn(node) : inorderList.push(node.data);
+    
+    if (callbackFn) {
+      callbackFn(node);
+    } else {
+      inorderList.push(node.data);
+    }
+    
     this.inorder(callbackFn, node.right, inorderList);
 
-    if (inorderList.length > 0) return inorderList;
+    return callbackFn ? undefined : inorderList;
   }
 
   preorder(callbackFn, node = this.root, preorderList = []) {
-    if (node === null) return;
+    if (node === null) return callbackFn ? undefined : [];
 
-    callbackFn ? callbackFn(node) : preorderList.push(node.data);
+    if (callbackFn) {
+      callbackFn(node);
+    } else {
+      preorderList.push(node.data);
+    }
+    
     this.preorder(callbackFn, node.left, preorderList);
     this.preorder(callbackFn, node.right, preorderList);
 
-    if (preorderList.length > 0) return preorderList;
+    return callbackFn ? undefined : preorderList;
   }
 
   postorder(callbackFn, node = this.root, postorderList = []) {
-    if (node === null) return;
+    if (node === null) return callbackFn ? undefined : [];
 
     this.postorder(callbackFn, node.left, postorderList);
     this.postorder(callbackFn, node.right, postorderList);
-    callbackFn ? callbackFn(node) : postorderList.push(node.data);
+    
+    if (callbackFn) {
+      callbackFn(node);
+    } else {
+      postorderList.push(node.data);
+    }
 
-    if (postorderList.length > 0) return postorderList;
+    return callbackFn ? undefined : postorderList;
   }
 
   height(node = this.root) {
-    if (node === null) return 0;
+    if (node === null) return -1;
 
     const leftHeight = this.height(node.left);
     const rightHeight = this.height(node.right);
@@ -112,14 +133,14 @@ class Tree {
     return Math.max(leftHeight, rightHeight) + 1;
   }
 
-  depth(nodeVal, node = this.root, edgeCount = 0) {
-    if (node === null) return;
-    if (node.data === nodeVal) return edgeCount;
+  depth(nodeValue, node = this.root, edgeCount = 0) {
+    if (node === null) return null;
+    if (node.data === nodeValue) return edgeCount;
 
-    if (node.data < nodeVal) {
-      return this.depth(nodeVal, node.right, edgeCount + 1);
+    if (node.data < nodeValue) {
+      return this.depth(nodeValue, node.right, edgeCount + 1);
     } else {
-      return this.depth(nodeVal, node.left, edgeCount + 1);
+      return this.depth(nodeValue, node.left, edgeCount + 1);
     }
   }
 
@@ -165,50 +186,25 @@ class Tree {
     }
   }
 
-  #inorderSuccesorFor(node) {
-    let currNode = node;
-    while (currNode.left) {
-      currNode = currNode.left;
+  #inorderSuccessorFor(node) {
+    let currentNode = node;
+    while (currentNode.left) {
+      currentNode = currentNode.left;
     }
-    return currNode;
+    return currentNode;
   }
 
   #removeNodeHelper(node) {
     if (node.left && node.right) {
-      const successorNode = this.#inorderSuccesorFor(node.right);
+      const successorNode = this.#inorderSuccessorFor(node.right);
       node.data = successorNode.data;
       node.right = this.remove(successorNode.data, node.right);
       return node;
     } else {
       const replacementNode = node.right || node.left;
-      node = null;
       return replacementNode;
     }
   }
 }
 
-// TODO(human)
 
-const arr = [2, 4, 3, 1, 2, 5];
-const test = new Tree(arr);
-console.log("=== BST Testing ===");
-console.log("Tree structure:");
-test.prettyPrint();
-
-console.log("\nTraversal tests:");
-console.log("Inorder:", test.inorder());
-console.log("Preorder:", test.preorder());
-console.log("Postorder:", test.postorder());
-console.log("Level order:", test.levelOrder());
-
-console.log("\nSearch and insert tests:");
-console.log("Find 4:", test.find(4) ? "Found" : "Not found");
-console.log("Find 10:", test.find(10) ? "Found" : "Not found");
-test.insert(6);
-console.log("After inserting 6:");
-test.prettyPrint();
-
-console.log("\nTree properties:");
-console.log("Height:", test.height());
-console.log("Depth of node 4:", test.depth(4));
-console.log("Is balanced:", test.isBalanced());

@@ -1,91 +1,148 @@
-# Binary Search Trees
+# Binary Search Tree Implementation
 
-## Assignment
+A complete implementation of a balanced Binary Search Tree (BST) data structure in JavaScript with comprehensive functionality and testing.
 
-You'll build a balanced BST in this assignment. Do not use duplicate values because they make it more complicated and result in trees that are much harder to balance. Therefore, be sure to always remove duplicate values or check for an existing value before inserting.
+## Features
 
-## Requirements
+### Core Data Structures
+- **Node Class**: Represents individual tree nodes with data and child references
+- **Tree Class**: Main BST implementation with automatic balancing and sorting
 
-### 1. Build a Node class/factory
-It should have an attribute for the data it stores as well as its left and right children.
+### Tree Operations
+- **Construction**: Builds balanced BST from arrays (removes duplicates, sorts automatically)
+- **Insertion**: Add new values while maintaining BST properties
+- **Deletion**: Remove values with proper handling of all cases (leaf, one child, two children)
+- **Search**: Find nodes by value with O(log n) complexity
 
-### 2. Build a Tree class/factory
-- Accepts an array when initialized
-- Should have a `root` attribute, which uses the return value of `buildTree` which you'll write next
+### Traversal Methods
+- **Level Order**: Breadth-first traversal using queue-based iteration
+- **In-order**: Left → Root → Right (produces sorted output)
+- **Pre-order**: Root → Left → Right
+- **Post-order**: Left → Right → Root
 
-### 3. Write a `buildTree(array)` function
-Takes an array of data (e.g., `[1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]`) and turns it into a balanced binary tree full of Node objects appropriately placed (don't forget to sort and remove duplicates!). The `buildTree` function should return the level-0 root node.
+All traversal methods support optional callback functions for custom processing.
 
-**Tip:** If you would like to visualize your binary search tree, here is a `prettyPrint()` function that will console.log your tree in a structured format. This function will expect to receive the root of your tree as the value for the node parameter.
+### Tree Properties
+- **Height**: Calculate tree/subtree height (edges from node to deepest leaf)
+- **Depth**: Calculate node depth (edges from root to target node)
+- **Balance Check**: Verify if tree maintains balance property
+- **Rebalancing**: Restore balance to unbalanced trees
+
+### Utility Features
+- **Pretty Print**: Visual tree structure display in console
+- **Automatic Deduplication**: Removes duplicate values during construction
+- **Null Handling**: Robust handling of empty trees and missing nodes
+
+## Usage
+
+### Basic Operations
 
 ```javascript
-const prettyPrint = (node, prefix = '', isLeft = true) => {
-  if (node === null) {
-    return;
-  }
-  if (node.right !== null) {
-    prettyPrint(node.right, `${prefix}${isLeft ? '│   ' : '    '}`, false);
-  }
-  console.log(`${prefix}${isLeft ? '└── ' : '┌── '}${node.data}`);
-  if (node.left !== null) {
-    prettyPrint(node.left, `${prefix}${isLeft ? '    ' : '│   '}`, true);
-  }
-};
+// Create a balanced BST from an array
+const tree = new Tree([15, 10, 20, 8, 12, 25, 6]);
+
+// Insert and remove values
+tree.insert(14);
+tree.remove(10);
+
+// Search for values
+const node = tree.find(12);
+console.log(node ? "Found" : "Not found");
 ```
 
-### 4. Write `insert(value)` and `deleteItem(value)` functions
-- Insert/delete the given value
-- You'll have to deal with several cases for delete, such as when a node has children or not
-- If you need additional resources, check out these two articles on [inserting and deleting](https://www.geeksforgeeks.org/binary-search-tree-set-1-search-and-insertion/), or this [video on BST inserting/removing](https://www.youtube.com/watch?v=wcIRPqTR3Kc) with several visual examples
+### Tree Traversals
 
-> **Important:** You may be tempted to implement these methods using the original input array used to build the tree, but it's important for the efficiency of these operations that you don't do this. If we refer back to the Big O Cheatsheet, we'll see that binary search trees can insert/delete in O(log n) time, which is a significant performance boost over arrays for the same operations. To get this added efficiency, your implementation of these methods should traverse the tree and manipulate the nodes and their connections.
+```javascript
+// Get arrays of values
+console.log("In-order:", tree.inorder());     // [6, 8, 12, 14, 15, 20, 25]
+console.log("Pre-order:", tree.preorder());   // [15, 10, 8, 6, 12, 14, 20, 25]
+console.log("Post-order:", tree.postorder()); // [6, 8, 14, 12, 10, 25, 20, 15]
+console.log("Level order:", tree.levelOrder()); // [15, 10, 20, 8, 12, 25, 6, 14]
 
-### 5. Write a `find(value)` function
-Returns the node with the given value.
+// Use with callback functions
+tree.inorder(node => console.log(`Processing: ${node.data}`));
+```
 
-### 6. Write a `levelOrderForEach(callback)` function
-- Accepts a callback function as its parameter
-- Should traverse the tree in breadth-first level order and call the callback on each node as it traverses, passing the whole node as an argument, similarly to how `Array.prototype.forEach` might work for arrays
-- May be implemented using either iteration or recursion (try implementing both!)
-- If no callback function is provided, throw an Error reporting that a callback is required
+### Tree Properties
 
-**Tip:** You will want to use an array acting as a queue to keep track of all the child nodes that you have yet to traverse and to add new ones to the list ([video on level order traversal](https://www.youtube.com/watch?v=86g8jAQug04)).
+```javascript
+// Check tree properties
+console.log("Tree height:", tree.height());      // Height of entire tree
+console.log("Node depth:", tree.depth(12));      // Depth of specific node
+console.log("Is balanced:", tree.isBalanced());  // Balance verification
 
-### 7. Write traversal functions
-Write `inOrderForEach(callback)`, `preOrderForEach(callback)`, and `postOrderForEach(callback)` functions that also accept a callback as a parameter. Each of these functions should:
-- Traverse the tree in their respective depth-first order
-- Pass each node to the provided callback
-- Throw an Error if no callback is given as an argument, like with `levelOrderForEach`
+// Rebalance if needed
+if (!tree.isBalanced()) {
+    tree.rebalance();
+    console.log("Tree rebalanced");
+}
+```
 
-The video [Binary Tree Traversal: Preorder, Inorder, Postorder](https://www.youtube.com/watch?v=WLvU5EQVZqY) explains the topic clearly.
+### Visualization
 
-### 8. Write a `height(value)` function
-- Returns the height of the node containing the given value
-- Height is defined as the number of edges in the longest path from that node to a leaf node
-- If the value is not found in the tree, the function should return `null`
+```javascript
+// Display tree structure
+tree.prettyPrint();
+/*
+Output example:
+    ┌── 25
+┌── 20
+│   └── 14
+15
+│       ┌── 12
+│   ┌── 10
+└── 8
+    └── 6
+*/
+```
 
-### 9. Write a `depth(value)` function
-- Returns the depth of the node containing the given value
-- Depth is defined as the number of edges in the path from that node to the root node
-- If the value is not found in the tree, the function should return `null`
+## Implementation Details
 
-### 10. Write an `isBalanced` function
-Checks if the tree is balanced. A binary tree is considered balanced if, for every node in the tree, the height difference between its left and right subtrees is no more than 1, and both the left and right subtrees are also balanced.
+### Balanced Construction
+The tree automatically creates a balanced structure by:
+1. Removing duplicate values using `Set`
+2. Sorting the array
+3. Recursively building the tree from the middle element
 
-> **Pitfall with checking balance:** A common mistake is only checking the height difference between the root's left and right children. That is not enough — you must check the balance condition for every node.
+### Height Definition
+- Empty nodes return height -1
+- Leaf nodes have height 0
+- Height increases by 1 for each level up the tree
 
-### 11. Write a `rebalance` function
-Rebalances an unbalanced tree. **Tip:** You'll want to use a traversal method to provide a new array to the `buildTree` function.
+### Balance Criteria
+A tree is considered balanced when:
+- For every node, the height difference between left and right subtrees ≤ 1
+- Both left and right subtrees are also balanced
 
-## Tie it all together
+### Time Complexity
+- **Search, Insert, Delete**: O(log n) for balanced trees
+- **Traversals**: O(n) to visit all nodes
+- **Balance Check**: O(n) to verify all nodes
+- **Rebalancing**: O(n) to rebuild tree
 
-Write a driver script that does the following:
+## Project Structure
 
-1. Create a binary search tree from an array of random numbers < 100. You can create a function that returns an array of random numbers every time you call it if you wish.
-2. Confirm that the tree is balanced by calling `isBalanced`.
-3. Print out all elements in level, pre, post, and in order.
-4. Unbalance the tree by adding several numbers > 100.
-5. Confirm that the tree is unbalanced by calling `isBalanced`.
-6. Balance the tree by calling `rebalance`.
-7. Confirm that the tree is balanced by calling `isBalanced`.
-8. Print out all elements in level, pre, post, and in order.
+```
+├── src/
+│   └── index.js          # Main BST implementation
+├── dist/
+│   └── bundle.js         # Webpack build output
+├── webpack.config.js     # Build configuration
+└── README.md            # Documentation
+```
+
+## Building and Running
+
+The project uses Webpack for bundling:
+
+```bash
+# Install dependencies
+npm install
+
+# Build the project
+npx webpack
+
+# Run the bundled code
+node dist/bundle.js
+```
+
